@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aisha ❤️ Alan</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#ff4d6d,#ff8fab,#ffb3c6);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow-x:hidden;
+}
+
+.container{
+width:90%;
+max-width:800px;
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.2);
+color:white;
+text-align:center;
+}
+
+h1{
+margin-bottom:15px;
+}
+
+.progress{
+height:12px;
+background:rgba(255,255,255,.3);
+border-radius:20px;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+.bar{
+height:100%;
+width:0%;
+background:white;
+transition:.5s;
+}
+
+.choice{
+display:block;
+width:100%;
+padding:15px;
+margin:10px 0;
+border:none;
+border-radius:15px;
+cursor:pointer;
+font-size:16px;
+background:white;
+color:#ff4d6d;
+font-weight:bold;
+}
+
+.choice:hover{
+transform:scale(1.03);
+}
+
+input{
+padding:12px;
+border:none;
+border-radius:10px;
+width:80%;
+margin-top:10px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin-top:10px;
+font-weight:bold;
+}
+
+.heart{
+position:fixed;
+top:-50px;
+font-size:25px;
+animation:fall linear forwards;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh);
+opacity:0;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>❤️ Aisha → Alan ❤️</h1>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<div id="app"></div>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+question:"Kapan tanggal jadian kita?",
+answers:["25 Desember 2025","13 Desember 2025","14 Februari 2025","1 Januari 2026"],
+correct:"13 Desember 2025"
+},
+
+{
+question:"Hal paling aneh yang pernah dilakukan pacarmu?",
+answers:["Minum saus","Makan es krim dengan kecap bango","Makan sabun","Makan kopi"],
+correct:"Makan es krim dengan kecap bango"
+},
+
+{
+question:"Apa yang paling disukai pacarmu?",
+answers:["Tas","Boneka Nailong","Mobil","Sepatu"],
+correct:"Boneka Nailong"
+},
+
+{
+question:"Apakah pacarmu sering ngambekan?",
+answers:["Tidak","Iya"],
+correct:"Iya"
+},
+
+{
+question:"Apa fondasi terkuat dalam hubungan?",
+answers:["Kepercayaan","Popularitas","Uang","Gengsi"],
+correct:"Kepercayaan"
+},
+
+{
+question:"Saat terjadi kesalahpahaman, yang terbaik adalah?",
+answers:["Komunikasi","Diam selamanya","Marah","Menghindar"],
+correct:"Komunikasi"
+},
+
+{
+question:"Apa yang membuat cinta bertahan lama?",
+answers:["Komitmen","Cemburu","Rahasia","Persaingan"],
+correct:"Komitmen"
+},
+
+{
+question:"Mana yang menunjukkan kasih sayang yang tulus?",
+answers:["Perhatian kecil","Hadiah mahal","Pamer hubungan","Mengatur pasangan"],
+correct:"Perhatian kecil"
+},
+
+{
+question:"Hubungan sehat membutuhkan?",
+answers:["Kerja sama","Persaingan","Dominasi","Paksaan"],
+correct:"Kerja sama"
+},
+
+{
+question:"Apa yang harus dilakukan saat pasangan sedih?",
+answers:["Mendukungnya","Mengabaikannya","Mengejeknya","Menyalahkannya"],
+correct:"Mendukungnya"
+},
+
+{
+question:"Apa hadiah paling berharga dalam hubungan?",
+answers:["Ketulusan","Uang","Barang mewah","Popularitas"],
+correct:"Ketulusan"
+},
+
+{
+question:"Apa yang harus dijaga agar hubungan tetap kuat?",
+answers:["Kepercayaan","Kecurigaan","Ego","Rahasia"],
+correct:"Kepercayaan"
+},
+
+{
+question:"Kata sederhana yang sering membuat pasangan bahagia?",
+answers:["Terima kasih","Terserah","Bodo amat","Diam"],
+correct:"Terima kasih"
+},
+
+{
+question:"Jika pasangan melakukan kesalahan kecil?",
+answers:["Memaafkan dan membicarakannya","Memutuskan hubungan","Mengabaikannya","Menyindir terus"],
+correct:"Memaafkan dan membicarakannya"
+},
+
+{
+question:"Apa yang membuat hubungan terasa aman?",
+answers:["Kejujuran","Kebohongan","Rahasia","Manipulasi"],
+correct:"Kejujuran"
+},
+
+{
+question:"Apa arti menjadi pasangan yang baik?",
+answers:["Saling mendukung","Selalu menang sendiri","Mengatur hidup pasangan","Membandingkan pasangan"],
+correct:"Saling mendukung"
+}
+
+];
+
+let current = 0;
+
+const app = document.getElementById("app");
+
+function shuffle(arr){
+return [...arr].sort(()=>Math.random()-0.5);
+}
+
+function updateBar(){
+document.getElementById("bar").style.width =
+(current/questions.length*100)+"%";
+}
+
+function showQuestion(){
+
+updateBar();
+
+if(current >= questions.length){
+showPin();
+return;
+}
+
+const q = questions[current];
+
+let answers = shuffle(q.answers);
+
+app.innerHTML = `
+<h2>Level ${current+1}/16</h2>
+<br>
+<p>${q.question}</p>
+`;
+
+answers.forEach(answer=>{
+
+let btn = document.createElement("button");
+
+btn.className = "choice";
+
+btn.innerText = answer;
+
+btn.onclick = ()=>{
+
+if(answer === q.correct){
+
+current++;
+
+showQuestion();
+
+}else{
+
+alert("❌ Salah, coba lagi ❤️");
+
+}
+
+};
+
+app.appendChild(btn);
+
+});
+
+}
+
+function showPin(){
+
+app.innerHTML = `
+<h2>🔐 Escape The Lock</h2>
+
+<p>
+PIN berasal dari tanggal dan bulan jadian (ddmm)
+</p>
+
+<input id="pin">
+
+<br>
+
+<button onclick="checkPin()">
+Buka
+</button>
+`;
+
+}
+
+function checkPin(){
+
+let pin =
+document.getElementById("pin").value;
+
+if(pin === "1312"){
+
+showWord();
+
+}else{
+
+alert("PIN Salah!");
+
+}
+
+}
+
+function showWord(){
+
+app.innerHTML = `
+<h2>🧩 Tebak Kata</h2>
+
+<p>N A O L G I N</p>
+
+<input id="word">
+
+<br>
+
+<button onclick="checkWord()">
+Jawab
+</button>
+`;
+
+}
+
+function checkWord(){
+
+let word =
+document.getElementById("word")
+.value
+.toUpperCase();
+
+if(word === "NAILONG"){
+
+showLucky();
+
+}else{
+
+alert("Belum benar");
+
+}
+
+}
+
+function showLucky(){
+
+app.innerHTML =
+`
+<h2>🎁 Lucky Box</h2>
+
+<p>Pilih salah satu kotak</p>
+`;
+
+for(let i=0;i<5;i++){
+
+let btn =
+document.createElement("button");
+
+btn.innerHTML = "🎁";
+
+btn.onclick = ()=>{
+
+if(i===2){
+
+alert("🏆 Achievement Unlocked!");
+
+}else{
+
+alert("❤️ Love Point +50");
+
+}
+
+};
+
+app.appendChild(btn);
+
+}
+
+let lanjut =
+document.createElement("button");
+
+lanjut.innerText =
+"💌 Buka Surat Cinta";
+
+lanjut.onclick =
+showLetter;
+
+app.appendChild(document.createElement("br"));
+app.appendChild(lanjut);
+
+}
+
+function showLetter(){
+
+document.getElementById("bar")
+.style.width = "100%";
+
+app.innerHTML = `
+
+<h2>💌 Untuk Alan</h2>
+
+<br>
+
+<p>
+
+Terima kasih sudah hadir dalam hidupku yaa Aa.
+
+<br><br>
+
+Saat 13 Desember 2025,
+banyak kenangan indah yang kita ciptakan bersama.
+
+<br><br>
+
+Aku ingin bilang terima kasih banyak atas
+semua hal yang telah Aa lakukan untukku
+aku merasa sangat beruntung karena bertemu dengan Aa
+saat itu, yang awalnya kita memang tidak ada niat untuk berpacaran yaa hihi:)❤️,
+dan tiba-tiba rasa cinta dan peduli muncul dengan sendirinya.
+semoga kita bisa terus bersama-sama yaa Aa.❤️
+
+<br><br>
+
+Mungkin aku kadang ngambek,
+kadang keras kepala,
+tetapi aku sangat bersyukur
+memilikimu.
+
+<br><br>
+
+❤️ Aku Sayang AA❤️
+❤️I LOVE YOU SO MUCH AA❤️
+
+<br><br>
+
+— Aisha
+
+</p>
+
+<br>
+
+<h2>🎉 CONGRATULATIONS 🎉</h2>
+
+<p>
+YEAYY SELAMAT Aa SUDAH MEMBUKA HATIKUUU!❤️
+</p>
+
+`;
+
+startHearts();
+
+}
+
+function startHearts(){
+
+setInterval(()=>{
+
+const heart =
+document.createElement("div");
+
+heart.classList.add("heart");
+
+heart.innerHTML = "❤️";
+
+heart.style.left =
+Math.random()*100+"vw";
+
+heart.style.animationDuration =
+(3+Math.random()*3)+"s";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>{
+heart.remove();
+},6000);
+
+},200);
+
+}
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
